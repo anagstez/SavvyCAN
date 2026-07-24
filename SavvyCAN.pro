@@ -28,6 +28,7 @@ SOURCES += main.cpp\
     connections/canlogserver.cpp \
     connections/canserver.cpp \
     connections/lawicel_serial.cpp \
+    connections/gs_usb.cpp \
     connections/mqtt_bus.cpp \
     dbc/dbcnodeduplicateeditor.cpp \
     framesenderobject.cpp \
@@ -114,6 +115,7 @@ HEADERS  += mainwindow.h \
     connections/canlogserver.h \
     connections/canserver.h \
     connections/lawicel_serial.h \
+    connections/gs_usb.h \
     connections/socketcand.h \
     connections/mqtt_bus.h \
     dbc/dbcnodeduplicateeditor.h \
@@ -248,6 +250,19 @@ win32-msvc* {
 
 win32-g++ {
    LIBS += libopengl32
+}
+
+# gs_usb / candleLight driver needs libusb-1.0
+macx {
+    INCLUDEPATH += /opt/homebrew/include/libusb-1.0 /usr/local/include/libusb-1.0
+    LIBS        += -L/opt/homebrew/lib -L/usr/local/lib -lusb-1.0
+}
+unix:!macx {
+    CONFIG    += link_pkgconfig
+    PKGCONFIG += libusb-1.0
+}
+win32 {
+    LIBS += -lusb-1.0
 }
 
 unix {

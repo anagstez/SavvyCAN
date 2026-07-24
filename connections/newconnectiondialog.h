@@ -50,6 +50,7 @@ private:
     void selectLawicel();
     void selectCANserver();
     void selectCANlogserver();
+    void selectGSUsb();
     bool isSerialBusAvailable();
     void setPortName(CANCon::type pType, QString pPortName, QString pDriver);
 };
