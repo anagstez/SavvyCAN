@@ -1,6 +1,7 @@
 #include <QCanBus>
 #include "newconnectiondialog.h"
 #include "ui_newconnectiondialog.h"
+#include "gs_usb.h"
 
 NewConnectionDialog::NewConnectionDialog(QVector<QString>* gvretips, QVector<QString>* kayakhosts, QWidget *parent) :
     QDialog(parent),
@@ -30,6 +31,7 @@ NewConnectionDialog::NewConnectionDialog(QVector<QString>* gvretips, QVector<QSt
     connect(ui->rbLawicel, &QAbstractButton::clicked, this, &NewConnectionDialog::handleConnTypeChanged);
     connect(ui->rbCANserver, &QAbstractButton::clicked, this, &NewConnectionDialog::handleConnTypeChanged);
     connect(ui->rbCanlogserver, &QAbstractButton::clicked, this, &NewConnectionDialog::handleConnTypeChanged);
+    connect(ui->rbGSUsb, &QAbstractButton::clicked, this, &NewConnectionDialog::handleConnTypeChanged);
 
     connect(ui->cbDeviceType, QOverload<int>::of(&QComboBox::currentIndexChanged), this, &NewConnectionDialog::handleDeviceTypeChanged);
     connect(ui->btnOK, &QPushButton::clicked, this, &NewConnectionDialog::handleCreateButton);
@@ -70,6 +72,7 @@ void NewConnectionDialog::handleConnTypeChanged()
     if (ui->rbMQTT->isChecked()) selectMQTT();
     if (ui->rbCANserver->isChecked()) selectCANserver();
     if (ui->rbCanlogserver->isChecked()) selectCANlogserver();
+    if (ui->rbGSUsb->isChecked()) selectGSUsb();
 }
 
 void NewConnectionDialog::handleDeviceTypeChanged()
@@ -270,6 +273,24 @@ void NewConnectionDialog::selectCANlogserver()
     ui->cbPort->clear();
 }
 
+void NewConnectionDialog::selectGSUsb()
+{
+    ui->lPort->setText("USB Device (vid:pid):");
+
+    ui->lblDeviceType->setHidden(true);
+    ui->cbDeviceType->setHidden(true);
+    ui->cbCANSpeed->setHidden(true);
+    ui->cbSerialSpeed->setHidden(true);
+    ui->lblCANSpeed->setHidden(true);
+    ui->lblSerialSpeed->setHidden(true);
+    ui->cbCanFd->setHidden(true);
+    ui->cbDataRate->setHidden(true);
+    ui->lblDataRate->setHidden(true);
+
+    ui->cbPort->clear();
+    ui->cbPort->addItems(GSUsbConnection::enumerateDevices());
+}
+
 void NewConnectionDialog::setPortName(CANCon::type pType, QString pPortName, QString pDriver)
 {
 
@@ -298,6 +319,9 @@ void NewConnectionDialog::setPortName(CANCon::type pType, QString pPortName, QSt
           break;
         case CANCon::CANLOGSERVER:
           ui->rbCanlogserver->setChecked(true);
+          break;
+        case CANCon::GSUSB:
+          ui->rbGSUsb->setChecked(true);
           break;
         default: {}
     }
@@ -348,6 +372,13 @@ void NewConnectionDialog::setPortName(CANCon::type pType, QString pPortName, QSt
             ui->cbPort->setCurrentText(pPortName);
             break;
         }
+        case CANCon::GSUSB:
+        {
+            int idx = ui->cbPort->findText(pPortName);
+            if (idx > -1) ui->cbPort->setCurrentIndex(idx);
+            else ui->cbPort->addItem(pPortName);
+            break;
+        }
         default: {}
     }
 }
@@ -365,6 +396,7 @@ QString NewConnectionDialog::getPortName()
         return ui->cbPort->currentText();
     case CANCon::CANSERVER:
     case CANCon::CANLOGSERVER:
+    case CANCon::GSUSB:
         return ui->cbPort->currentText();
 
     default:
@@ -411,6 +443,7 @@ CANCon::type NewConnectionDialog::getConnectionType()
     if (ui->rbLawicel->isChecked()) return CANCon::LAWICEL;
     if (ui->rbCANserver->isChecked()) return CANCon::CANSERVER;
     if (ui->rbCanlogserver->isChecked()) return CANCon::CANLOGSERVER;
+    if (ui->rbGSUsb->isChecked()) return CANCon::GSUSB;
     qDebug() << "getConnectionType: error";
 
     return CANCon::NONE;
