@@ -31,7 +31,6 @@ Qt і libusb вже всередині бандла, нічого додатко
 brew install qt@5 libusb
 git clone https://github.com/anagstez/SavvyCAN.git
 cd SavvyCAN
-git checkout add-gs-usb-driver
 ./build_macos.sh
 open SavvyCAN.app
 ```
