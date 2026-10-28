@@ -296,7 +296,8 @@ INSTALLS += target
 
 TRANSLATIONS += \
     translations/SavvyCAN_en.ts \
-    translations/SavvyCAN_pt_BR.ts
+    translations/SavvyCAN_pt_BR.ts \
+    translations/SavvyCAN_uk.ts
 
 DISTFILES += \
     translations/pt_BR.qph
