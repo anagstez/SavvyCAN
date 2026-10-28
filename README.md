@@ -8,6 +8,47 @@ capturing of canbus frames.
 
 Please use the "Discussions" tab here on GitHub to ask questions and interact with the community.
 
+## Цей форк: драйвер gs_usb / candleLight + нативний macOS
+
+Додано драйвер `gs_usb` (candleLight та сумісні USB-CAN адаптери, через libusb) і українську
+локалізацію.
+
+### Встановлення на macOS (Apple Silicon) — готовий реліз
+
+1. Завантаж `SavvyCAN-macos-arm64.zip` зі сторінки
+   [Releases](https://github.com/anagstez/SavvyCAN/releases) і розпакуй.
+2. Збірка підписана ad-hoc (без нотаризації), тому зніми карантин:
+   ```sh
+   xattr -dr com.apple.quarantine SavvyCAN.app
+   ```
+3. Запусти: `open SavvyCAN.app` (або перетягни в `/Applications`).
+
+Qt і libusb вже всередині бандла, нічого додатково ставити не треба.
+
+### Збірка з вихідників (macOS)
+
+```sh
+brew install qt@5 libusb
+git clone https://github.com/anagstez/SavvyCAN.git
+cd SavvyCAN
+git checkout add-gs-usb-driver
+./build_macos.sh
+open SavvyCAN.app
+```
+
+Скрипт виконує `qmake` + `make` + `macdeployqt` + ad-hoc підпис.
+
+### Підключення адаптера gs_usb
+
+Підключи адаптер по USB, у SavvyCAN відкрий **Connection → Settings** і натисни **Add New Device Connection**,
+обери тип gs_usb і потрібний пристрій. Окремі драйвери ядра на macOS не потрібні.
+
+### Linux / Windows
+
+Див. розділ збірки в `CLAUDE.md` (`qmake && make`; потрібні модулі Qt5 і `libusb-1.0`).
+
+---
+
 Requires a resolution of at least 1024x768. Fully multi-monitor capable. Works on 4K monitors as well.
 
 You are highly recommended to use the
